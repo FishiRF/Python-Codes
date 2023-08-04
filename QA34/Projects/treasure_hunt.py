@@ -17,9 +17,9 @@ def create_file(new_file,textbox):
     file.write(textbox)
 
 def create_top10_results(results_file):
-    file = open(results_file, 'a+')
-    # Dictreader allows me to read dictionaries into the csv file
-    reader = csv.DictReader(file)
+    #file = open(results_file, 'a+')
+    # DictReader allows me to read dictionaries into the csv file
+    reader = csv.DictReader(results_file)
     top10_results = list(reader)    # making reader a list of dictionary
     top10_results.sort(key=get_tries)  # Sort based on number of tries
     top10_results = top10_results[:10]  # Keep only the top 10 results
@@ -35,7 +35,7 @@ def add_result(top10_results, player_name, tries):
     return top10_results
 
 def update_top10_results(file_name, top10_results):
-        file = open(file_name, 'w+', newline='')
+        file = open(file_name, 'w', newline='')
         # setting the headers for the results table
         results_table = ['Player Name', 'Tries']
         # DictWriter allows me to write dictionaries into the csv file
