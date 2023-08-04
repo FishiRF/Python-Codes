@@ -1,5 +1,6 @@
 import random
 import csv
+import os
 def create_textbox():
     numbers = list(range(10))
     textbox = ''
@@ -17,10 +18,15 @@ def create_file(new_file,textbox):
     file.write(textbox)
 
 def create_top10_results(results_file):
-    #file = open(results_file, 'a+')
-    # DictReader allows me to read dictionaries into the csv file
-    reader = csv.DictReader(results_file)
-    top10_results = list(reader)    # making reader a list of dictionary
+    if not os.path.exists(results_file):
+        # If the 'top10_results.csv' file doesn't exist, create it with an empty header row
+        with open(results_file, 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['Player Name', 'Tries'])
+    with open(results_file, 'r') as file:
+        # DictReader allows me to read dictionaries into the csv file
+        reader = csv.DictReader(file)
+        top10_results = list(reader)    # making reader a list of dictionary
     top10_results.sort(key=get_tries)  # Sort based on number of tries
     top10_results = top10_results[:10]  # Keep only the top 10 results
     return top10_results
@@ -31,7 +37,7 @@ def get_tries(result):
 def add_result(top10_results, player_name, tries):
     top10_results.append({'Player Name': player_name, 'Tries': tries})
     top10_results.sort(key=get_tries)  # Sort based on number of tries
-    top10_results = top10_results[:10]  # Keep only the top 10 results
+    top10_results[:] = top10_results[:10]  # Keep only the top 10 results in place
     return top10_results
 
 def update_top10_results(file_name, top10_results):
@@ -80,8 +86,3 @@ file_name = 'treasure_hunt.txt'
 text = create_textbox()
 create_file(file_name, text)
 find_the_treasure(file_name)
-
-
-
-
-
