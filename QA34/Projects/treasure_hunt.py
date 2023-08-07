@@ -2,22 +2,32 @@ import random
 import csv
 import os
 def create_textbox():
-    numbers = list(range(10))
-    textbox = ''
+    '''
+    this function creates the textbox where the 'TREASURE' is hidden
+    '''
+    numbers = list(range(10))   # creating a list with numbers from 0-9
+    textbox = ''    
     for num in numbers:
-        count = random.randint(1, 2)
+        count = random.randint(1, 20)
         textbox += str(num) * count
     textbox += 'TREASURE'
-    for num in reversed(numbers):
-        count = random.randint(1, 2)
+    for num in reversed(numbers):   # reversed(numbers) means the list is reversed
+        count = random.randint(1, 20)
         textbox += str(num) * count
 
     return textbox
 def create_file(new_file,textbox):
+    '''
+    this function opens the file in write mod and writes the textbox in it
+    '''
     file = open(new_file, 'w')
     file.write(textbox)
 
 def create_top10_results(results_file):
+    '''
+    this function creates a top10_results csv file
+    if the file isn't already exists
+    '''
     if not os.path.exists(results_file):
         # If the 'top10_results.csv' file doesn't exist, create it with an empty header row
         with open(results_file, 'w', newline='') as file:
@@ -32,26 +42,42 @@ def create_top10_results(results_file):
     return top10_results
 
 def get_tries(result):
+    '''
+    this function is used to assist
+    the add_result function
+    '''
     return int(result['Tries'])
 
 def add_result(top10_results, player_name, tries):
+    '''
+    this function is replacing and sorting the new score into the file
+    and limiting the file into 10 results
+    '''
     top10_results.append({'Player Name': player_name, 'Tries': tries})
     top10_results.sort(key=get_tries)  # Sort based on number of tries
     top10_results[:] = top10_results[:10]  # Keep only the top 10 results in place
     return top10_results
 
 def update_top10_results(file_name, top10_results):
-        file = open(file_name, 'w', newline='')
-        # setting the headers for the results table
-        results_table = ['Player Name', 'Tries']
-        # DictWriter allows me to write dictionaries into the csv file
-        writer = csv.DictWriter(file, fieldnames=results_table)
-        # using writeheader in order to have the headers on top
-        writer.writeheader()
-        # using writerows in order to have each result in different row
-        writer.writerows(top10_results)
+    '''
+    this function opens the top10_results file with writing authority
+    and updates the scores on the table
+    '''
+    file = open(file_name, 'w', newline='')
+    # setting the headers for the results table
+    results_table = ['Player Name', 'Tries']
+    # DictWriter allows me to write dictionaries into the csv file
+    writer = csv.DictWriter(file, fieldnames=results_table)
+    # using writeheader in order to have the headers on top
+    writer.writeheader()
+    # using writerows in order to have each result in different row
+    writer.writerows(top10_results)
 
 def find_the_treasure(new_file):
+    '''
+    this function opens the file in read mod and lets
+    the user moves forward or backward in the textbox
+    '''
     file = open(new_file, 'r')
     textbox = file.read()
     treasure_letters = list('TREASURE')
@@ -60,26 +86,37 @@ def find_the_treasure(new_file):
     while all(textbox[cursor] != treasure_letters[i] for i in range(len(treasure_letters))):
         direction = int(input('Where do you want to move? (1 - forward, 2 - backward) '))
         steps = int(input('How many characters? '))
+        # if the user chose to move forward
         if direction == 1:
+            # if the user moves forward above the end of the text box
             if (cursor + steps) >= len(textbox):
+                # the cursor now will be equal to the
+                # index of the last letter in the textbox
                 cursor = len(textbox) - 1
-            else:
+            else:   # if the user didn't move above the end
+                # the cursor will add to itself the steps the user input
                 cursor += steps
+        # if the user chose to move backward
         elif direction == 2:
+            # if the user moves too much backwards (before the beginning of the textbox)
             if (cursor - steps) < 0:
+                # the cursor will now be equal to the beginning
                 cursor = 0
-            else:
+            else:   # if the user didn't move too much backwards
+                # the cursor will be equal to itself minus the steps
                 cursor -= steps
+        # checking if the current character
+        # is not part of the treasure letters
         if textbox[cursor] not in treasure_letters:
             print(f'you hit {textbox[cursor]} try again until you hit one of the TREASURE letters')
-        tries += 1
+        tries += 1  # counting the number of tries it took the user to find the TREASURE
     print(f'Congratulations!! you found the TREASURE it took you {tries} tries to find it')
     player_name = input('Enter your name: ')
     add_result(top10_results, player_name, tries)
     update_top10_results(results_file, top10_results)
 
 
-# Calling for the functions
+# calling for the functions
 results_file = 'top10_results.csv'
 top10_results = create_top10_results(results_file)
 file_name = 'treasure_hunt.txt'
