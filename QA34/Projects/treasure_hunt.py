@@ -1,12 +1,14 @@
 import random
 import csv
 import os
+
+
 def create_textbox():
-    '''
+    """
     this function creates the textbox where the 'TREASURE' is hidden
-    '''
+    """
     numbers = list(range(10))   # creating a list with numbers from 0-9
-    textbox = ''    
+    textbox = ''
     for num in numbers:
         count = random.randint(1, 20)
         textbox += str(num) * count
@@ -16,18 +18,21 @@ def create_textbox():
         textbox += str(num) * count
 
     return textbox
+
+
 def create_file(new_file,textbox):
-    '''
+    """
     this function opens the file in write mod and writes the textbox in it
-    '''
+    """
     file = open(new_file, 'w')
     file.write(textbox)
 
+
 def create_top10_results(results_file):
-    '''
+    """
     this function creates a top10_results csv file
     if the file isn't already exists
-    '''
+    """
     if not os.path.exists(results_file):
         # If the 'top10_results.csv' file doesn't exist, create it with an empty header row
         with open(results_file, 'w', newline='') as file:
@@ -41,28 +46,31 @@ def create_top10_results(results_file):
     top10_results = top10_results[:10]  # Keep only the top 10 results
     return top10_results
 
+
 def get_tries(result):
-    '''
+    """
     this function is used to assist
     the add_result function
-    '''
+    """
     return int(result['Tries'])
 
+
 def add_result(top10_results, player_name, tries):
-    '''
+    """
     this function is replacing and sorting the new score into the file
     and limiting the file into 10 results
-    '''
+    """
     top10_results.append({'Player Name': player_name, 'Tries': tries})
     top10_results.sort(key=get_tries)  # Sort based on number of tries
     top10_results[:] = top10_results[:10]  # Keep only the top 10 results in place
     return top10_results
 
+
 def update_top10_results(file_name, top10_results):
-    '''
+    """
     this function opens the top10_results file with writing authority
     and updates the scores on the table
-    '''
+    """
     file = open(file_name, 'w', newline='')
     # setting the headers for the results table
     results_table = ['Player Name', 'Tries']
@@ -73,11 +81,12 @@ def update_top10_results(file_name, top10_results):
     # using writerows in order to have each result in different row
     writer.writerows(top10_results)
 
+
 def find_the_treasure(new_file):
-    '''
+    """
     this function opens the file in read mod and lets
     the user moves forward or backward in the textbox
-    '''
+    """
     file = open(new_file, 'r')
     textbox = file.read()
     treasure_letters = list('TREASURE')
